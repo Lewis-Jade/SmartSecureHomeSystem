@@ -20,6 +20,9 @@
      
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-2">
+        <a href="/history" class="btn btn-outline-secondary">
+    <i class="fas fa-clock"></i> View IoT History
+  </a>
   <a class="navbar-brand" href="#">Smart Security Dashboard</a>
   <div class="ms-auto d-flex align-items-center">
     <button class="btn btn-outline-light me-3">
@@ -62,7 +65,7 @@
 </div>
 <div class="container mt-4">
   <h2>Distance Dashboard</h2>
-  <p>Distance to sensor: <span id="distanceValue">-- cm</span></p>
+
 
   <div class="progress" style="height: 25px; max-width: 400px;">
     <div
@@ -76,28 +79,17 @@
     ></div>
   </div>
 </div>
-<div class="container mt-4">
-  <h3>Controls</h3>
-  <div class="d-flex gap-3 ">
-    <!-- Servo control button -->
-    <button id="servoBtn" class="btn btn-primary">
-      Move Servo
-    </button>
 
-    <!-- Reset system button -->
-    <button id="resetBtn" class="btn btn-danger">
-      Reset System
-    </button>
-  </div>
-</div>
 
 
 <button id="servoBtn" class="btn btn-primary">
-  <i class="fas fa-cog me-2"></i> Move Servo
+  <i class="fas fa-cog me-2"></i> Close Door
 </button>
 <button id="resetBtn" class="btn btn-danger">
   <i class="fas fa-redo me-2"></i> Reset System
 </button>
+   <div class="mt-4 text-center">
+
 <div>
   <h3>Security System Dashboard</h3>
 
@@ -106,6 +98,8 @@
     <span id="ledStatus" style="width:20px; height:20px; border-radius:50%; display:inline-block; background-color: gray;"></span>
     <label>LED Status</label>
   </div>
+  
+
 
   <!-- Notification -->
   <div id="notification" style="margin-top: 15px; font-weight: bold; color: red;"></div>

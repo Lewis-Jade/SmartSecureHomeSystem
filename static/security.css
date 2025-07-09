@@ -9,22 +9,38 @@
 
 
 body{
-  background-color: #3483faa8;
+  background-color: #faf4f4d2;
 }
 
 .container{
+  position: relative;
   background: #fff;
   height: 50%;
   border-radius:10px ;
   box-shadow: 4px 4px 10px #0000002f,
               -4px -4px 10px #0000002f;
 }
-
+.mt-4{
+  background-color: rgb(245, 243, 243);
+  padding: 20px;
+}
+.btn{
+  color: #fff;
+}
+.navbar-brand{
+  text-align: center;
+  font-size: 20px;
+}
 #notification {
-  margin: 20px 0;
-  
+  top: 10px;
+  left: 400px;
+  color: #fff;
+  background: rgb(211, 9, 9);
+position: absolute;
+z-index: 2;
   font-weight: bold;
-  animation: fadeIn 0.5s ease-in-out;
+  animation: fadeIn s ease-in-out;
+
 }
 
 @keyframes fadeIn {

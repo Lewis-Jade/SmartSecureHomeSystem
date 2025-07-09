@@ -1,110 +1,136 @@
-function showMotionAlert() {
-  const alertBox = document.getElementById("notification");
-  alertBox.classList.remove("d-none");
+// 🔁 Fetch data from Flask every 2 seconds
+setInterval(() => {
+  fetch('/dashboard-data')
+    .then(res => res.json())
+    .then(data => {
+      if (!data) return;
 
-  setTimeout(() => {
-    alertBox.classList.add("d-none");
-  }, 5000); // hide after 5 seconds
+      // Update motion
+      if (data.motion !== undefined) {
+        document.getElementById('motionStatus').textContent = data.motion ? "Motion Detected" : "No Motion";
+        setLEDStatus(data.motion);
+        showNotification(data.motion ? "⚠ Motion Detected!" : "");
+      }
+
+      // Update distance
+      if (data.distance !== undefined) {
+        updateDistance(data.distance);
+      }
+
+      // Update RFID
+      if (data.rfid !== undefined) {
+        document.getElementById('rfidStatus').textContent = data.rfid;
+      }
+
+      // Update Door
+      if (data.door !== undefined) {
+        document.getElementById('doorStatus').textContent = data.door ? "Open" : "Closed";
+      }
+    })
+    .catch(err => {
+      console.error("Error fetching dashboard data:", err);
+    });
+}, 2000);
+
+// ✅ LED update
+function setLEDStatus(on) {
+  const led = document.getElementById('ledStatus');
+  led.style.backgroundColor = on ? 'green' : 'gray';
 }
 
-// Example: simulate motion detection every 8 seconds
-setInterval(() => {
-    showMotionAlert();
-}, 8000);
-
+// ✅ Distance update
 function updateDistance(value) {
   const distanceText = document.getElementById('distanceValue');
   const distanceBar = document.getElementById('distanceBar');
 
-    distanceText.textContent = `${value} cm`;
 
+  
+  distanceText.textContent = `${value} cm`;
 
-
-  // Assuming max sensor range is 100cm for bar scaling
   let percent = Math.min(value, 100);
   distanceBar.style.width = percent + '%';
   distanceBar.setAttribute('aria-valuenow', percent);
 
-  // Optional: change bar color based on distance
   if (value < 20) {
-    distanceBar.className = 'progress-bar bg-danger'; // too close
+    distanceBar.className = 'progress-bar bg-danger';
   } else if (value < 50) {
-    distanceBar.className = 'progress-bar bg-warning'; // caution
+    distanceBar.className = 'progress-bar bg-warning';
   } else {
-    distanceBar.className = 'progress-bar bg-info'; // safe distance
+    distanceBar.className = 'progress-bar bg-info';
   }
 }
-// Demo: update distance every 3 seconds with random values
-setInterval(() => {
-  const randomDistance = Math.floor(Math.random() * 100);
-  updateDistance(randomDistance);
-}, 3000);
-document.getElementById('servoBtn').addEventListener('click', () => {
-  // Replace with actual servo control code or API call
-  console.log('Servo move triggered');
-  alert('Servo moving!');
-  // Example: send command to backend/microcontroller
-  // fetch('/api/servo/move', { method: 'POST' });
-});
 
-document.getElementById('resetBtn').addEventListener('click', () => {
-  // Reset system logic here
-  console.log('System reset triggered');
-  alert('System is resetting...');
-  // Example: fetch('/api/system/reset', { method: 'POST' });
-});
-function setLEDStatus(on) {
-  const led = document.getElementById('ledStatus');
-  led.style.backgroundColor = on ? 'green' : 'gray';
-}
-function setLEDStatus(on) {
-  const led = document.getElementById('ledStatus');
-  led.style.backgroundColor = on ? 'green' : 'gray';
-}
-
-// Function to show notification message
+// ✅ Show alert
 function showNotification(message) {
-  const notification = document.getElementById('notification');
-  notification.textContent = message;
+  const alertBox = document.getElementById("notification");
+  alertBox.textContent = message;
+  if (message) {
+    alertBox.classList.remove("d-none");
+    setTimeout(() => {
+      alertBox.classList.add("d-none");
+    }, 5000);
+  }
 }
 
-// Function to update distance value
-function updateDistance(distance) {
-  const distanceValue = document.getElementById('distanceValue');
-  distanceValue.textContent = distance;
-}
+// ✅ Servo button
+document.getElementById('servoBtn').addEventListener('click', () => {
+  fetch('/set-command', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ servo: "on" })
+  })
+  .then(res => res.json())
+  .then(data => console.log("Command set:", data));
+});
 
-// Simulate receiving data every 2 seconds
-setInterval(() => {
-  // Simulated data (replace with real sensor data)
-  const motionDetected = Math.random() > 0.6; // 40% chance motion detected
-  const distance = (Math.random() * 100).toFixed(2); // random distance in cm
-  // Update LED: on if motion detected
-  setLEDStatus(motionDetected);
+// ✅ Reset button
+document.getElementById('resetBtn').addEventListener('click', () => {
+  fetch('/iot/reset', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.status); // "System reset successful!"
 
-  // Update notification
-  if (motionDetected) {
-    showNotification('⚠ Motion Detected!');
-  } else {
-    showNotification('');
-  }
+    // 👇 Reset UI components visually
+    document.getElementById('ledStatus').style.backgroundColor = 'gray';
+    document.getElementById('distanceValue').textContent = '-- cm';
 
-  // Update distance dashboard
-  updateDistance(distance);
-}, 2000);// Update LED: on if motion detected
-  setLEDStatus(motionDetected);
+    const distanceBar = document.getElementById('distanceBar');
+    distanceBar.style.width = '0%';
+    distanceBar.className = 'progress-bar';
 
-  // Update notification
-  if (motionDetected) {
-    showNotification('⚠ Motion Detected!');
-  } else {
-    showNotification('');
-  }
+    document.getElementById('motionStatus').textContent = 'No motion detected';
+    document.getElementById('doorStatus').textContent = 'Closed';
 
-  // Update distance dashboard
-  updateDistance(distance);
-
+    const notification = document.getElementById('notification');
+    notification.classList.add('d-none'); // Hide it
+    notification.textContent = ''; // Clear any message
+  })
+  .catch(err => {
+    console.error('Error resetting system:', err);
+    alert('Failed to reset system.');
+  });
+});
 
 
-
-
+// Handle "Close Door" button click (was: servoBtn)
+document.getElementById('servoBtn').addEventListener('click', () => {
+  fetch('/iot/servo', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.status); // Example: "Door closed (servo triggered)"
+  })
+  .catch(err => {
+    console.error('Error triggering door/servo:', err);
+    alert('Failed to close door.');
+  });
+});
