@@ -32,19 +32,25 @@ body{
   font-size: 20px;
 }
 #notification {
-  top: 10px;
-  left: 400px;
-  color: #fff;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   background: rgb(211, 9, 9);
-position: absolute;
-z-index: 2;
-  font-weight: bold;
-  animation: fadeIn s ease-in-out;
+  color: #fff;
 
+  border-radius: 8px;
+  font-weight: bold;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-in-out;
+  max-width: 90vw;  
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
+
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
+  from { opacity: 0; transform: translateY(-2px); }
   to { opacity: 1; transform: translateY(0); }
 }
 #distanceValue {
@@ -59,6 +65,7 @@ z-index: 2;
   margin: 10px;
   width: 170px;
   height: 50px;
+ 
 }
 #servoBtn{
   background: #044d10;

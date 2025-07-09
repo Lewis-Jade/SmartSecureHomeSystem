@@ -1,24 +1,26 @@
-from flask import Flask, request, jsonify,render_template,Response,CORS
+from flask import Flask, request, jsonify,render_template,Response
 import json,time,os,csv
 app = Flask(__name__)
-
 
 latest_data = {}
 @app.route('/')
 def dashboard():
     return render_template('dashboard.html')
 # Receive sensor data from IoT
+
 @app.route('/iot/data', methods=['POST'])
 def receive_data():
     global latest_data
     data = request.json
     latest_data = data  # store it
+    data['timestamp'] = time.strftime('%Y-%m-%d %H:%M:%S')
     print(f"Data from IoT: {data}")
     with open('data_log.json', 'a') as f:
         f.write(json.dumps(data) + '\n')
 
     print(f"Data from IoT: {data}")
     return jsonify({"status": "received"})
+
 
 
 @app.route('/dashboard-data', methods=['GET'])

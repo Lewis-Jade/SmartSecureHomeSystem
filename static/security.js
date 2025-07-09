@@ -1,4 +1,7 @@
 // 🔁 Fetch data from Flask every 2 seconds
+
+let motionPreviously = false;
+
 setInterval(() => {
   fetch('/dashboard-data')
     .then(res => res.json())
@@ -6,11 +9,19 @@ setInterval(() => {
       if (!data) return;
 
       // Update motion
-      if (data.motion !== undefined) {
-        document.getElementById('motionStatus').textContent = data.motion ? "Motion Detected" : "No Motion";
-        setLEDStatus(data.motion);
-        showNotification(data.motion ? "⚠ Motion Detected!" : "");
-      }
+  if (data.motion !== undefined) {
+  document.getElementById('motionStatus').textContent = data.motion ? "Motion Detected" : "No Motion";
+  setLEDStatus(data.motion);
+
+  // ✅ Only show notification if motion just started
+  if (data.motion && !motionPreviously) {
+    showNotification("⚠ Motion Detected!");
+  }
+
+  // Update memory of last motion state
+  motionPreviously = data.motion;
+}
+
 
       // Update distance
       if (data.distance !== undefined) {
@@ -47,6 +58,7 @@ function updateDistance(value) {
   
   distanceText.textContent = `${value} cm`;
 
+
   let percent = Math.min(value, 100);
   distanceBar.style.width = percent + '%';
   distanceBar.setAttribute('aria-valuenow', percent);
@@ -61,16 +73,22 @@ function updateDistance(value) {
 }
 
 // ✅ Show alert
-function showNotification(message) {
-  const alertBox = document.getElementById("notification");
-  alertBox.textContent = message;
-  if (message) {
-    alertBox.classList.remove("d-none");
-    setTimeout(() => {
-      alertBox.classList.add("d-none");
-    }, 5000);
-  }
+function showNotification(message = '⚠ Motion Detected!') {
+  const notification = document.getElementById('notification');
+
+  notification.textContent = message;
+  notification.classList.remove('d-none');
+
+  addNotification(message); // Add to recent alerts panel
+
+  setTimeout(() => {
+    notification.classList.add('d-none');
+    notification.textContent = '';
+  }, 5000);
 }
+
+
+
 
 // ✅ Servo button
 document.getElementById('servoBtn').addEventListener('click', () => {
@@ -134,3 +152,52 @@ document.getElementById('servoBtn').addEventListener('click', () => {
     alert('Failed to close door.');
   });
 });
+
+
+const notifBtn = document.getElementById('notifBtn');
+const notifPanel = document.getElementById('notifPanel');
+const notifList = document.getElementById('notifList');
+const notifBadge = document.getElementById('notifBadge');
+
+let alertCount = 0;
+
+// Toggle notification panel visibility
+notifBtn.addEventListener('click', () => {
+  notifPanel.classList.toggle('d-none');
+  notifBadge.classList.add('d-none'); // hide red badge once opened
+});
+
+// Add a new alert to the recent list
+function addNotification(msg) {
+  const item = document.createElement('li');
+  item.className = 'list-group-item';
+  item.textContent = `${new Date().toLocaleTimeString()} - ${msg}`;
+  notifList.prepend(item); // add to top
+
+  alertCount++;
+  notifBadge.textContent = alertCount;
+  notifBadge.classList.remove('d-none'); // show red dot
+}
+
+// Optional: Reset badge and alerts (for reset button)
+function resetNotifications() {
+  notifList.innerHTML = '';
+  alertCount = 0;
+  notifBadge.classList.add('d-none');
+}
+
+
+
+// Hide notification if you click outside it
+document.addEventListener('click', (e) => {
+  const notifBtn = document.getElementById('notifBtn');
+  const notifPanel = document.getElementById('notifPanel');
+
+  // If panel is visible and click is outside both the panel and the bell
+  if (!notifPanel.classList.contains('d-none') &&
+      !notifPanel.contains(e.target) &&
+      !notifBtn.contains(e.target)) {
+    notifPanel.classList.add('d-none');
+  }
+});
+

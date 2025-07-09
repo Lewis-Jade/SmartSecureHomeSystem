@@ -1,2 +1,7 @@
-{"motion": true, "distance": 60, "rfid": "R007", "door": true}
-{"motion": true, "distance": 60, "rfid": "R007", "door": true}
+{"motion": true, "distance": 60, "rfid": "R0GT", "door": true, "timestamp": "2025-07-10 00:39:16"}
+{"motion": true, "distance": 60, "rfid": "R0GT", "door": true, "timestamp": "2025-07-10 00:43:30"}
+{"motion": true, "distance": 60, "rfid": "R0GT", "door": true, "timestamp": "2025-07-10 00:47:54"}
+{"motion": true, "distance": 60, "rfid": "R0GT", "door": true, "timestamp": "2025-07-10 00:50:46"}
+{"motion": true, "distance": 60, "rfid": "R0T", "door": false, "timestamp": "2025-07-10 00:51:43"}
+{"motion": true, "distance": 60, "rfid": "R062", "door": true, "timestamp": "2025-07-10 00:51:59"}
+{"motion": true, "distance": 30, "rfid": "R062", "door": true, "timestamp": "2025-07-10 00:57:28"}

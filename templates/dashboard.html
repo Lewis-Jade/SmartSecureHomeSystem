@@ -21,13 +21,27 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-2">
         <a href="/history" class="btn btn-outline-secondary">
-    <i class="fas fa-clock"></i> View IoT History
+    <i class="fas fa-clock"></i> View History
   </a>
   <a class="navbar-brand" href="#">Smart Security Dashboard</a>
   <div class="ms-auto d-flex align-items-center">
-    <button class="btn btn-outline-light me-3">
-      <i class="fas fa-bell"></i>
-    </button>
+  <!-- Bell Button -->
+<button id="notifBtn" class="btn btn-outline-light me-3 position-relative">
+  <i class="fas fa-bell"></i>
+  <span id="notifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">
+    1
+  </span>
+</button>
+
+<!-- Notification Panel -->
+<div id="notifPanel"   id="notification" class="card shadow p-3 position-absolute d-none" style="top: 60px; right: 20px; width: 300px; z-index: 1050;">
+  <strong>Recent Alerts</strong>
+  <hr>
+  <ul id="notifList" class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
+    <!-- Filled by JS -->
+  </ul>
+</div>
+
    
   </div>
 </nav>
@@ -104,12 +118,6 @@
   <!-- Notification -->
   <div id="notification" style="margin-top: 15px; font-weight: bold; color: red;"></div>
 
-  <!-- Distance dashboard -->
-  <div style="margin-top: 15px;">
-    <label>Distance from sensor: </label>
-    <span id="distanceValue">--</span> cm
-  </div>
-</div>
 
 
 
