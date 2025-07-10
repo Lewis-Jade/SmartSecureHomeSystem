@@ -12,7 +12,7 @@ def dashboard():
 def receive_data():
     global latest_data
     data = request.json
-    latest_data = data  # store it
+    latest_data = data  
     data['timestamp'] = time.strftime('%Y-%m-%d %H:%M:%S')
     print(f"Data from IoT: {data}")
     with open('data_log.json', 'a') as f:
@@ -27,10 +27,10 @@ def receive_data():
 def dashboard_data():
     return jsonify(latest_data)
 
-# Send command to IoT device (optional)
+
 @app.route('/iot/command', methods=['GET'])
 def send_command():
-    # Replace with real logic
+
     command = {"servo": "on", "led": "off"}
     return jsonify(command)
 
@@ -85,15 +85,25 @@ def download_csv():
 
 
 @app.route('/iot/servo', methods=['POST'])
-def trigger_servo():
-    print("🚪 Door close command received!")
-    return jsonify({"status": "Door closed (servo triggered)"})
+def handle_servo():
+    data = request.get_json()
+    action = data.get('action', 'close')  # default is 'close'
+
+    if action == "open":
+        print("🔓 Door open command received!")
+        return jsonify({"status": "Door opened (servo)"})
+    else:
+        print("🔒 Door close command received!")
+        return jsonify({"status": "Door closed (servo)"})
+
 
 
 @app.route('/iot/reset', methods=['POST'])
 def reset_system():
-    print("🔄 System reset requested.")
+    print("System reset requested.")
     
+
+
 
     global latest_data
     latest_data = {}

@@ -1,4 +1,4 @@
-// 🔁 Fetch data from Flask every 2 seconds
+//  Fetch data from Flask every 2 seconds
 
 let motionPreviously = false;
 
@@ -13,7 +13,7 @@ setInterval(() => {
   document.getElementById('motionStatus').textContent = data.motion ? "Motion Detected" : "No Motion";
   setLEDStatus(data.motion);
 
-  // ✅ Only show notification if motion just started
+  // Only show notification if motion just started
   if (data.motion && !motionPreviously) {
     showNotification("⚠ Motion Detected!");
   }
@@ -43,13 +43,13 @@ setInterval(() => {
     });
 }, 2000);
 
-// ✅ LED update
+//  LED update
 function setLEDStatus(on) {
   const led = document.getElementById('ledStatus');
   led.style.backgroundColor = on ? 'green' : 'gray';
 }
 
-// ✅ Distance update
+// Distance update
 function updateDistance(value) {
   const distanceText = document.getElementById('distanceValue');
   const distanceBar = document.getElementById('distanceBar');
@@ -72,7 +72,7 @@ function updateDistance(value) {
   }
 }
 
-// ✅ Show alert
+// Show alert
 function showNotification(message = '⚠ Motion Detected!') {
   const notification = document.getElementById('notification');
 
@@ -90,18 +90,46 @@ function showNotification(message = '⚠ Motion Detected!') {
 
 
 
-// ✅ Servo button
-document.getElementById('servoBtn').addEventListener('click', () => {
-  fetch('/set-command', {
+// 🟢 OPEN DOOR
+document.getElementById('openBtn').addEventListener('click', () => {
+  fetch('/iot/servo', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ servo: "on" })
+    body: JSON.stringify({ action: "open" })
   })
   .then(res => res.json())
-  .then(data => console.log("Command set:", data));
+  .then(data => {
+    alert(data.status);
+    document.getElementById('doorStatus').textContent = "Open";
+  })
+  .catch(err => {
+    console.error('Error opening door:', err);
+    alert('Failed to open door.');
+  });
 });
 
-// ✅ Reset button
+// 🔴 CLOSE DOOR
+document.getElementById('servoBtn').addEventListener('click', () => {
+  fetch('/iot/servo', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: "close" })  // ✅ Be consistent
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.status);
+    document.getElementById('doorStatus').textContent = "Closed";
+  })
+  .catch(err => {
+    console.error('Error closing door:', err);
+    alert('Failed to close door.');
+  });
+});
+
+
+
+
+//Reset button
 document.getElementById('resetBtn').addEventListener('click', () => {
   fetch('/iot/reset', {
     method: 'POST',
@@ -200,4 +228,3 @@ document.addEventListener('click', (e) => {
     notifPanel.classList.add('d-none');
   }
 });
-
